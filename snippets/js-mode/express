@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: express
+# key: express
+# --
+const http = require("http")
+const express = require("express")
+const path = require("path")
+
+const app = express();
+app.use(express.urlencoded({ extended: ${1:$$(yas-choose-value '(true false))} }))
+app.use(express.static(path.join(__dirname, "${2:dist}")))
+const server = http.createServer(app)
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname,"$2"))
+});
+
+server.listen("${3:8080}")$0

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name:vcf 
+# key: vcf
+# --
+BEGIN:VCARD
+VERSION:2.1
+N:;$1;;;
+FN:$1
+TEL;HOME:$2
+END:VCARD

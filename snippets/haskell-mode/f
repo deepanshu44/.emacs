@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: fun
+# key: f
+# expand-env: ((yas-indent-line 'fixed))
+# $$(replace-regexp-in-string "[a-z]+" (lambda (x) (capitalize x)) yas-text)
+# $$(replace-regexp-in-string "^\\\\(\\\\[\\\\)?\\\\(.\\\\)" (lambda (x) (capitalize x)) yas-text)
+# --
+${1:function-name} :: ${2:Type} ${3:-> ${4:Type}}
+$1 ${5:arguments} = ${6:undefined}$0

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: let typescript object
+# key: l
+# --
+let $1:${2:$$(upcase-initials yas-text)} = {
+  $3
+}$0

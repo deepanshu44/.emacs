@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: redux-createSlice
+# key: rslice
+# --
+
+const ${1:`(file-name-nondirectory (file-name-sans-extension (buffer-file-name)))`} = createSlice({
+      name:${2:$$(car (split-string (yas-field-value 1) "Slice"))`},
+      ${3:initialState},
+      reducers:{
+        $4
+      }
+})$0;

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: let-arrow
+# key: lear
+# --
+let $1 = ($2) => $3;$0

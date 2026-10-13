@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: redux-applyMiddleware
+# key: redamid
+# --
+const ${1:middleware} = applyMiddleware($2);$0

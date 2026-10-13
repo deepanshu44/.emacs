@@ -1,0 +1,6 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+## binding: C-c :
+# name: key-value
+# --
+$1 : $2${3:,}
+$0

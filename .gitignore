@@ -1,11 +1,55 @@
-# Compiled
-*.elc
-
-# Packaging
-.cask
-
-# Backup files
+# Emacs auto-save and backup files
 *~
+\#*\#
+.\#*
+%*~
+*.bak
 
-# Undo-tree save-files
-*.~undo-tree
+# Byte-compiled files
+*.elc
+.yas-compiled-snippets.el
+
+# Native compilation cache (Emacs 28+)
+eln-cache/
+/eln-cache/
+
+# Package archives and package manager dirs
+/elpa/
+/straight/
+/quelpa/
+/.cask/
+/var/
+
+# Runtime state, caches, and history
+/auto-save-list/
+/history*
+/recentf*
+/bookmarks*
+/tramp
+/ido.last*
+/logview-cache*
+/.cache/
+/transient/
+/multisession/
+/eshell/
+/url/
+/persist/
+/project-explorer-cache/
+/network-security.data
+/session.*
+*.eld
+.mc-lists.el
+.org-id-locations
+.pdf-view-restore
+
+# LLM / AI prompt histories and logs
+*prompt*history*
+*prompt-data*
+/gpt-prompt-history.org*
+
+# Credentials and secrets
+.authinfo*
+.netrc*
+*.gpg
+secrets.el
+private.el

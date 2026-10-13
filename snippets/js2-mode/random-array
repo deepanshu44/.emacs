@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: array generate random
+# key: array
+# --
+new Array(${1:100}).fill(null).map((_, i) => Math.floor(Math.random() * ${2:100}) + i)$0

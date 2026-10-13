@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: redux-mapState
+# key: redmaps
+# --
+
+const mapStateToProps = ({$1}) => ({${2:$1}});$0

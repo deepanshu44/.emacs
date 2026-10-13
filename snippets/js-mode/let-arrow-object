@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: let-arrow-object
+# key: learr
+# --
+let $1 = ($2) => {
+   $3
+};$0

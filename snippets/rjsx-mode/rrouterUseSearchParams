@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: react-router-useSearchParams
+# key: usp
+# --
+const [${1:searchParams},${2:setSearchParams}] = useSearchParams();$0

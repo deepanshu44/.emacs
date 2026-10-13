@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ObjectReduce
+# key: or
+# --
+$1.reduce((a,v$2) => $3,$4)$5

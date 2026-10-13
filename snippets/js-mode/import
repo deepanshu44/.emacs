@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: import
+# key: imp
+# import ${1:$(let* ((text-list (split-string (file-name-base yas-text) "-"))
+#        (str1 (car text-list))
+#        (str2 (mapconcat #'capitalize (cdr text-list) ""))
+#        (output (concat str1 str2))
+#        )
+#   output
+#   )} from '${1:module}'$0
+# --
+
+import ${2:${1:$(let* ((text-list (split-string (file-name-base yas-text) "-"))
+       (str1 (car text-list))
+       (str2 (mapconcat #'capitalize (cdr text-list) ""))
+       (output (concat str1 str2))
+       )
+  output
+  )}} from '${1:module}'$0

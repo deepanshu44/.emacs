@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Object Literal Type
+# key: tu
+# --
+type ${1:$$(if (eq yas-moving-away-p t)(string-join (split-string (capitalize (yas-field-value 1))) ""))} = $2 | $3;$0

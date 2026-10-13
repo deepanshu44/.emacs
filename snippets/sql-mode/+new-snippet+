@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: alter-table-drop
+# key: atd
+# --
+ALTER TABLE $1 DROP $0;

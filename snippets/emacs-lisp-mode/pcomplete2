@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: pcomplete
+# key: pcom2
+# --
+(defun pcomplete/$1 ()
+  ${2:(setq pcomplete--cmd-$1-data '($3))}
+  (setq pcomplete--completion-extra-properties
+	'(:annotation-function (lambda (x) 
+				 (concat "      " (cadr (assoc x pcomplete--cmd-$1-data))))))
+  (let (${3:(pcomplete-termination-string nil)})
+    (while (cond
+	    ((pcomplete-match "^-" 0) (pcomplete-here* pcomplete--cmd-$1-data))
+	    (t (pcomplete-here '($4)))
+	    ))
+    )
+  )

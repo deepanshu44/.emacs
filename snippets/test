@@ -1,0 +1,19 @@
+# -*- mode:snippet -*-
+# name: test
+# key: testn
+# --
+as
+`(progn
+
+  (setq num 0)
+  (setq loop (read))
+
+  (setq val ())
+  (while (< num loop)
+    (add-to-list 'val (read)
+		 )
+    (setq num (+ 1 num)))
+  
+  val)
+`
+

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: setImmediate
+# key: stm
+# --
+setImmediate(() => {
+  $1
+})

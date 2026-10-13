@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: redux-combine
+# key: redcom
+# --
+const ${1:reducer} = combineReducers({$2});$0

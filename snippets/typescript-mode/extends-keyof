@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: extends-keyof
+# key: exk
+# --
+extends keyof ${1:$$(capitalize yas-text)}

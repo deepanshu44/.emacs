@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: key-value
+# binding: C-c :
+# expand-env: ((yas-indent-line 'fixed)(yas-also-indent-empty-lines t))
+# key: kv
+# --
+ : $1${2:,}$0

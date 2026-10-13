@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: array push
+# key: pu
+# --
+$1.push($2)$0

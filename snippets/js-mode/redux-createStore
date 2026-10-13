@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: redux-createStore
+# key: redsto
+# --
+const ${1:store} = createStore($2);$0

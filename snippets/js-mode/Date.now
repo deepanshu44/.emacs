@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Date.now()
+# key: now
+# --
+let ${1:t1} = Date.now();$0

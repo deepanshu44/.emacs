@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: class-private
+# key: pr
+# --
+private $1: $0

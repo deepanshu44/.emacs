@@ -1,0 +1,47 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: class2
+# key: clt
+# --
+class ${1:$$ (progn
+(setq x yas-text)
+(if (and (length> x 0)
+	 (setq x (concat (upcase-initials (substring x 0 1)) (substring x 1 (string-width x))))
+	 (string-match " " x) (length> x (+ (string-match " " x) 1))
+	 (setq x (string-join (split-string (upcase-initials x) " " ) ""))) x x))}${2: extends ${3:$ParentClass$(upcase-initials yas-text)}} ${4:implements ${5:ClassName}}{
+${6:$(let* ((parameter-node ;; get parameters in constructor(^)
+	     (treesit-node-child
+					    ;; first method is constructor
+					    ;; used (point) since somehow cursor pos is always at the beginning of snippet
+					    (treesit-search-forward (treesit-node-at (point)) "method")
+					    1))
+            ;; arguments of parent class; to be copied in super(^)
+            (super-args (save-excursion (goto-char (+ 1 (search-forward "super")))(class-super-get-parent-params "typed-list")))
+	    ;; super-args  +  user entered params
+	    (user-input (split-string (replace-regexp-in-string " ?, ?" "," (substring (treesit-node-text parameter-node t) 1 -1)) "," t))
+	    ;; removed params that are already in parent class
+	    (filtered-list (mapcan (lambda (x) (cond ((member x super-args) nil)
+			     (t (list x)))) user-input))
+            (this-declaration (string-join filtered-list ";\n")))
+         this-declaration
+      )}
+constructor(${6:$$(if (and (equal yas-text "") (not (equal (yas-field-value 3) "")))
+;; pointer has to be on super(^) to get params
+(save-excursion (next-line)(backward-char)(backward-char)
+(class-super-get-parent-params "typed")
+)
+)}){
+  ${7:super(${8:$$(class-super-get-parent-params "simple")});}
+     ${9:$$(let* ((parameter-node
+	     (treesit-node-child (treesit-search-forward (treesit-node-at (point)) "method_definition" t) 1))
+	    (super-args (save-excursion (search-backward ")")(class-super-get-parent-params "simple-list")))
+	    (simple-parameters (flatten-list (cdr (treesit-induce-sparse-tree parameter-node "identifier"))))
+	    (this-form (mapconcat
+			(lambda (x) (let* ((value (treesit-node-text x t)))
+				 (cond ((member value super-args) nil)
+				       (t (concat "this." value" = " value ";\n"))))
+			  ) simple-parameters))
+	    )
+	   this-form
+       )}
+}$0
+}

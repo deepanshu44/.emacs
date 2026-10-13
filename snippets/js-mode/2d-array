@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: 2d-array
+# binding: C-c C-a
+# key: 2d
+# --
+$1[$2][$3]$0

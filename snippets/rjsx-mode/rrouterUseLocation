@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: rrouter-useLocation
+# key: ul
+# --
+const ${1:location} = useLocation();$0

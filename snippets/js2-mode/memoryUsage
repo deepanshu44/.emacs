@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: memoryUsage
+# key: memory
+# --
+//console.log(\`\$\{Math.round(process.memoryUsage().rss/1024/1024)\} MB\`)
+const startUsage = process.cpuUsage();
+// ... your code ...
+const endUsage = process.cpuUsage(startUsage);
+console.log({
+  user: endUsage.user / 1000 + ' ms',    // User CPU time
+  system: endUsage.system / 1000 + ' ms' // System CPU time
+});
+
+const memoryUsage = process.memoryUsage();
+console.log({
+  rss: (memoryUsage.rss / 1024 / 1024).toFixed(2) + ' MB',
+  heapTotal: (memoryUsage.heapTotal / 1024 / 1024).toFixed(2) + ' MB',
+  heapUsed: (memoryUsage.heapUsed / 1024 / 1024).toFixed(2) + ' MB'
+});
+

@@ -1,0 +1,12 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: class
+# key: class
+# --
+class ${1:$$(if (eq yas-moving-away-p t)(string-join (split-string (capitalize (yas-field-value 1))) ""))}${2: extends ${3:ParentClass}} ${4:implements $5}{
+  ${6:constructor(${7:arg}) {
+    ${8:super(arg);}
+    $9
+  \}}
+
+  $0
+}

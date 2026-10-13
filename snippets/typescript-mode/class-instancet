@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: class instance
+# key: newt
+# --
+const $2: ${3:$()} = new ${3:$$(capitalize yas-text)}($5);$0

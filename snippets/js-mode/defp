@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: defineProperty
+# key: defp
+# --
+Object.defineProperty($1,"$2",{value:$3${4:,configurable:${5:$$(yas-choose-value '("true" "false"))}}${6:,enumerable:${7:$$(yas-choose-value '("true" "false"))}}${8:,writable:${9:$$(yas-choose-value '("true" "false"))}}})

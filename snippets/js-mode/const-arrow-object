@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: const arrow object
+# key: coarr
+# --
+const $1 = ($2) => {
+  $3
+};$0

@@ -1,0 +1,7 @@
+# -*- mode: dockerfile -*-
+# contributor: 
+# name: docker-image-name
+# key: din
+# --
+
+## -*- dockerfile-image-name: "$1" -*-$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: redux-connect
+# key: redcon
+# --
+let ${1:name}=connect(${2:mapStateToProps}${3:,${4:mapDispatchToProps}})($5);$0

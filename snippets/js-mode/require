@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: require
+# key: req
+# const ${1:$(replace-regexp-in-string "\\(^.\\)" #'downcase
+# 			  (mapconcat
+# 			   (lambda (x) (capitalize x))
+# 			   (split-string (file-name-base yas-text) "-")
+# 			   "") t)} = require("$1")$0
+# --
+const ${1:$(let* ((text-list (split-string (file-name-base yas-text) "-"))
+       (str1 (car text-list))
+       (str2 (mapconcat #'capitalize (cdr text-list) ""))
+       (output (concat str1 str2))
+       )
+  output
+  )} = require("$1")$0

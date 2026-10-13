@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: pcomplete1
+# key: pcom1
+# --
+(defun pcomplete/$1 ()
+  (let (${2:(pcomplete-termination-string nil)})
+    (while (cond
+	    ((pcomplete-match "^-" 0) '($3))
+	    (t (pcomplete-here '($4)))
+	    ))
+    )
+  )

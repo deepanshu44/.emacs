@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: curl
+# key: curl
+# --
+curl -s -D -X POST \
+  ${1:http://localhost:3000} \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'Custom-Header: Custom Value' \
+  -d '{
+        "key1": "value1",
+        "key2": "value2"
+      }'$0

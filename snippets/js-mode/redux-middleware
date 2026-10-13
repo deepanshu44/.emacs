@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: redux-middleware
+# key: redmid
+# --
+const ${1:middlewareName} = (store) => (next) => (action) =>{
+      $2
+};$0

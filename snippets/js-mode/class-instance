@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: class instance
+# key: new
+# --
+const $2 = new ${3:$$ (progn
+(setq x yas-text)
+(if (and (length> x 0)
+	 (setq x (concat (upcase-initials (substring x 0 1)) (substring x 1 (string-width x))))) x x))ClassName}($4);$0

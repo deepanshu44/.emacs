@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: if-typeof
+# key: ift
+# --
+if (typeof $1 === $2){
+  $3
+}$0

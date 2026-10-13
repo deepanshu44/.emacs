@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: redux-mapDispatch
+# key: redmapd
+# --
+
+const mapDispatchToProps = (dispatch) => ({$1});$0

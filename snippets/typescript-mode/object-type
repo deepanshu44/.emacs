@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: object type
+# key: tyo
+# --
+type ${1:$$ (progn
+(setq x yas-text)
+(if (and (length> x 0)
+	 (setq x (concat (upcase-initials (substring x 0 1)) (substring x 1 (string-width x))))
+	 (string-match " " x) (length> x (+ (string-match " " x) 1))
+	 (setq x (string-join (split-string (upcase-initials x) " " ) ""))) x x))} = {
+ $2
+};$0

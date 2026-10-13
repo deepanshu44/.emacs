@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: node-http-post
+# key: post
+# --
+${1:app}.post("/$2",(req, res)=>{
+  $3
+})$0;

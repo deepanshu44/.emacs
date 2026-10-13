@@ -1,0 +1,264 @@
+;; -*- mode: emacs-lisp; lexical-binding: t; -*-
+
+;;asyncronous
+;; (async-start (lambda ()
+;; 	       (shell-command-to-string "sleep 3;echo well done"))
+;; 	     (lambda (result)
+;;                (message "Async (point)rocess done, result should be 222: %s"
+;; 			result)))
+
+(defun gpt-test ()
+  (interactive)
+  (let* ((beg (if mark-active (region-beginning) (point-min)))
+	 (end (if mark-active (region-end) (point-max)))
+	 ;; (string-join (split-string (buffer-substring-no-properties (point-min)(point)) "\n") "\\n")
+	 (buffer-content-beg
+	  (replace-regexp-in-string "\"" "\\\\\""
+				    (if mark-active
+					(buffer-substring-no-properties beg end)
+				      (buffer-substring-no-properties (point-min)(point)))))
+	 (prompt (string-join (split-string (string-join (split-string buffer-content-beg "\t") "\\t") "\n") "\\n"))
+	 ;; (string-join (split-string (buffer-substring-no-properties (point) (point-max)) "\n") "\\n")
+	 ;; if region is active, not suffix exists
+	 (buffer-content-end
+	  (if mark-active
+	      ""
+	    (replace-regexp-in-string "\"" "\\\\\"" (buffer-substring-no-properties (point) end))
+	    ))
+	 (suffix (string-join (split-string (string-join (split-string buffer-content-end "\t") "\\t") "\n") "\\n"))
+	 )
+    (insert (cdr (assoc 'content (cdr (assoc 'message (car (append (cdr (assoc 'choices (json-read-from-string (shell-command-to-string
+														(concat "curl -s \
+     --location \"https://codestral.mistral.ai/v1/fim/completions\"\
+     --header 'Content-Type: application/json'\
+     --header 'Accept: application/json'\
+     --header \"Authorization: Bearer <your_api>\"\
+     --data '\{\"model\":\"codestral-latest\",
+               \"prompt\":\"" (string-replace "'" "'\\''"  prompt) "\",
+               \"suffix\": \"" (string-replace "'" "'\\''"  suffix) "\",
+               \"temperature\": 0
+\}'") )))) nil)))))))))
+
+(defun gpt-send-promt (str)
+  (let* ((beg (if mark-active (region-beginning) (point-min)))
+	 (end (if mark-active (region-end) (point-max)))
+	 ;; (string-join (split-string (buffer-substring-no-properties (point-min)(point)) "\n") "\\n")
+	 (prompt-str
+	  (replace-regexp-in-string "\"" "\\\\\""
+				    str))
+	 (prompt (string-join (split-string (string-join (split-string prompt-str "\t") "\\t") "\n") "\\n"))
+	 ;; (string-join (split-string (buffer-substring-no-properties (point) (point-max)) "\n") "\\n")
+	 ;; if region is active, not suffix exists
+	 )
+    (with-temp-buffer
+      (markdown-mode)
+      (insert (cdr (assoc 'content (cdr (assoc 'message (car (append (cdr (assoc 'choices (json-read-from-string (shell-command-to-string
+														  (concat "curl -s \
+     --location \"https://codestral.mistral.ai/v1/fim/completions\"\
+     --header 'Content-Type: application/json'\
+     --header 'Accept: application/json'\
+     --header \"Authorization: Bearer <your_api>\"\
+     --data '\{\"model\":\"codestral-latest\",
+               \"prompt\":\"" (string-replace "'" "'\\''"  prompt) "\",
+               \"temperature\": 0
+\}'") )))) nil)))))))
+      (fill-region (point-min) (point-max))
+      (newline)
+      (buffer-string)
+      )))
+;; (defun gpt-send-promt (str)
+;;   (with-temp-buffer
+;;     (markdown-mode)
+;;     (insert (cdr (assoc 'content (cdr (assoc 'message (car (append (cdr (assoc 'choices (json-read-from-string (shell-command-to-string
+;; 														(concat "curl -s \
+;;      --location \"https://codestral.mistral.ai/v1/fim/completions\"\
+;;      --header 'Content-Type: application/json'\
+;;      --header 'Accept: application/json'\
+;;      --header \"Authorization: Bearer <your_api>\"\
+;;      --data '\{\"model\":\"codestral-latest\",
+;;                \"prompt\":\"" str "\",
+;;                \"temperature\": 0
+;; \}'") )))) nil)))))))
+;;     (fill-region (point-min) (point-max))
+;;     (newline)
+;;     (buffer-string)
+;;     )
+;;   )
+;; (async-start
+;;  (lambda ()
+;;    (shell-command-to-string "echo hello")
+;;    )
+;;  (lambda (res)
+;;    (message "res:%s" res)
+;;    )
+;;  )
+
+;; \"max_tokens\": 64,
+
+;;; interactive gpt mode -*- lexical-binding: t -*-
+
+;; https://github.com/nicferrier/elnode/blob/master/examples/elnode-ijs.el#L69
+
+(defvar gpt-shell/input nil
+  "Input for the js shell.
+
+Each element is a cons of a uuid and the javascript to send.")
+
+(defvar gpt-shell/input-hash (make-hash-table :test 'equal)
+  "Record of things sent to the js engine.
+
+This stores the UUID and the js comint process for all input.
+The js engine uses the UUID to communicate results back to us,
+when it does the relevant element is deleted.")
+
+(defun gpt-shell-handler (httpcon)
+  (gpt-defer-until (car-safe gpt-shell/input)
+      (unwind-protect
+           (gpt-send-json httpcon gpt-shell/input)
+        (setq gpt-shell/input nil))))
+
+(defun gpt-shell-result-handler (httpcon)
+  (let* ((id (gpt-http-param httpcon "uuid"))
+         (result (gpt-http-param httpcon "result"))
+         (buffer (gethash id gpt-shell/input-hash)))
+    (remhash id gpt-shell/input-hash)
+    (if buffer
+        (with-current-buffer buffer
+          ;; Delete the hash
+          (let ((buffer-read-only nil))
+            (save-excursion
+               (re-search-backward
+                (concat "#" id)
+                nil t)
+               (delete-region (point) (line-end-position))
+               (insert (format "%S" result)))))
+        ;; Else
+        (message "%s is not in the hash" id))))
+
+(defconst gpt-shell-prompt "LLM> ")
+
+(defun gpt-shell/input-sender (proc input)
+  (let ((id (gpt-send-promt input))
+        (buffer-read-only nil)
+        (lb (- (line-beginning-position) 5)))
+    (comint-output-filter proc (format "#%s\n" id))
+    ;; (with-current-buffer
+    ;; 	(current-buffer)
+    ;;   (previous-line)
+    ;;   (activate-mark)
+    ;;   (comint-previous-prompt)
+    ;;   (fill-region (region-beginning) (region-end))
+    ;;   (comint-next-prompt)
+    ;;   )
+    (with-temp-buffer
+      (comment-auto-fill)
+      (newline)
+      (insert  (concat "* " input))
+      (insert id)
+      (org-mode)
+      (org-set-property "time" (format-time-string "%c"))
+      (write-region nil nil "~/.emacs.d/gpt-prompt-history.org" t)
+      )
+    ;; (push (cons id input) gpt-shell/input)
+    ;; (puthash id (process-buffer proc) gpt-shell/input-hash)
+)
+  (comint-output-filter proc gpt-shell-prompt))
+
+(define-derived-mode
+    gpt-shell/mode comint-mode "GPT_Mistral"
+    "Run GPT shell"
+    ;; :syntax-table js2-mode-syntax-table
+    (setq comint-prompt-regexp (concat "^" (regexp-quote gpt-shell-prompt)))
+    (setq comint-input-sender 'gpt-shell/input-sender)
+
+    (unless (comint-check-proc (current-buffer))
+      ;; Was cat, but on non-Unix platforms that might not exist, so
+      ;; use hexl instead, which is part of the Emacs distribution.
+      (let ((fake-proc
+             (condition-case nil
+                 (start-process "ijsm" (current-buffer) "hexl")
+               (file-error (start-process "ijsm" (current-buffer) "cat")))))
+        (set-process-query-on-exit-flag fake-proc nil)
+        ;; Add a silly header
+        (insert "Interactive GPT Mode\n")
+        (set-marker
+         (process-mark fake-proc) (point))
+        (comint-output-filter fake-proc gpt-shell-prompt))))
+
+;; This needs to take a url
+(defun gpt-shell ()
+  (interactive)
+  (let ((name (format "Mistral:codestral-latest")))
+    (let ((buf
+           ;; This needs to be tied to the url
+           (get-buffer-create (format "*%s*" name))))
+      (with-current-buffer buf
+        (gpt-shell/mode)
+        (switch-to-buffer buf)))))
+
+;; from eshell
+;; (defcustom gpt-shell-kill-hook nil
+  
+;;   )
+(defun gpt-shell-interrupt-process
+    (gpt-shell)
+  )
+
+;;; get history
+
+;; idea for this function came from codestral-latest
+(defun org-headlines-as-list ()
+  "Return a list of all headlines in the current Org mode buffer."
+  (let ((headlines '()))
+    (org-map-entries
+     (lambda ()
+       (setq headlines  (append headlines (list (cons (org-get-heading) (point))))))
+     )
+    headlines
+    ))
+
+(defun gpt-shell/history ()
+  (interactive)
+  (insert (car (with-temp-buffer
+    (progn
+      (org-mode)
+      (insert-file-contents "~/.emacs.d/gpt-prompt-history.org")
+      (setq-local heading-list (org-headlines-as-list))
+      (setq-local prompt-search (completing-read
+				 "History element: "
+				 heading-list))
+      (search-forward prompt-search)
+      (move-beginning-of-line nil)
+      (org-map-entries (lambda () (concat (substring-no-properties (org-get-heading)) (replace-regexp-in-string "\\(\[\n\]\\|.\\)*END:\n" "" (buffer-substring-no-properties (point-min) (point-max))))) t 'tree)
+      )
+    )))
+  (comint-interrupt-subjob)
+  (gpt-shell)
+  )
+
+(with-eval-after-load "GPT_Mistral" (define-hostmode poly-js-hostmode :mode 'GPT_Mistral))
+
+(define-innermode gpt-shell-code-innermode
+   :mode 'js-mode
+   :head-matcher "```javascript"
+   :tail-matcher "```$"
+
+   :head-mode 'host
+   :tail-mode 'host)
+
+ (define-polymode poly-js-gpt-mode
+   :hostmode 'poly-js-hostmode
+   :innermodes '(gpt-shell-code-innermode))
+
+(add-hook 'gpt-shell/mode-hook (lambda ()
+				 ;; (poly-js-gpt-mode)
+				 (company-mode -1)
+				 (define-key gpt-shell/mode-map (kbd "RET") (lambda () (interactive)
+									      (open-line 1)
+									      (next-line)
+									      ))
+				 (define-key gpt-shell/mode-map (kbd "M-RET") 'comint-send-input)
+				 ))
+(global-set-key (kbd "C-x C-y") 'gpt-shell)
+
+;;; gpt-shell.el ends here

@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: type
+# key: ty
+# --
+${1:$$ (let* ((x yas-text)
+       (lis (split-string (s-trim-right x) " "))
+       (first (car lis))
+       (temp (cdr lis))
+       (rest (if temp
+		 (mapconcat (lambda (x) (capitalize x)) temp "")
+	       ))
+       )
+   (if rest (concat first rest) x)
+  )} :: ${2:$$(upcase-initials yas-text)Types}$0

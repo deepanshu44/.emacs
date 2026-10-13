@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: function-genric
+# key: fug
+# --
+
+function $1<${2:Type$$(mapconcat (lambda (x)
+(if (length> x 0) (concat (upcase-initials (substring x 0 1)) (substring x 1 (length x))))) (split-string yas-text ",") ",")}>($3)${4::}{
+ $5
+};$0

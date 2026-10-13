@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: simple express server
+# key: simple
+# --
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('done');
+});
+
+app.listen(${1:3000}, () => {
+  console.log('Server is running on port $1');
+});

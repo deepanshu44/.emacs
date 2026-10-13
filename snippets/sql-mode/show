@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: show
+# key: sh
+# --
+SHOW ${1:$$(yas-choose-value '("DATABASES" "TABLES" "COLUMNS FROM" "INDEX FROM" "TABLE STATUS LIKE"))} ;
+$0

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: constructor
+# key: cons
+# --
+super($1)
+${1:$(eglot-signature-eldoc-function (lambda (x) x))}

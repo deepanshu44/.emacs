@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: promise
+# key: prom
+# --
+new Promise((${1:resolve},${2:reject})=>{
+   $3    
+})$0

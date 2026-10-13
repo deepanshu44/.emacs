@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: time
+# key: time
+# --
+console.time()
+$0
+console.timeEnd()

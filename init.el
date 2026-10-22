@@ -660,55 +660,56 @@
 
 ;; customized shell-pop functions
 ;; all of this editing to remove `cd` line in comint history
-(defun shell-pop--cd-to-cwd-shell (cwd)
-  (goto-char (point-max))
-  (comint-kill-input)
-  ;; doesn't goes into the bash history variable
-  (insert (concat "  cd " (shell-quote-argument cwd)))
+(with-eval-after-load 'shell-pop
+  (defun shell-pop--cd-to-cwd-shell (cwd)
+    (goto-char (point-max))
+    (comint-kill-input)
+    ;; doesn't goes into the bash history variable
+    (insert (concat "  cd " (shell-quote-argument cwd)))
 
-  ;; directly modify cd withou typing in the prompt
-  ;; (comint-redirect-send-command-to-process
-  ;;  (concat "cd " (shell-quote-argument cwd)) nil (get-buffer-process (current-buffer)) nil t)
-  
-  (let ((comint-process-echoes t))
-    (comint-send-input))
-  (recenter 0))
-(defun shell-pop--cd-to-cwd-term (cwd)
-  ;; (term-send-raw-string (concat "cd " (shell-quote-argument cwd) "\n"))
-  (comint-redirect-send-command-to-process
-   (shell-quote-argument cwd) nil (get-buffer-process (current-buffer)) nil t)
-  (comint-send-input)
-  (term-send-raw-string "\C-l")
-  )
-(defun shell-pop-up (index)
-  (run-hooks 'shell-pop-in-hook)
-  (let ((w (if (listp index)
-               (let ((ret (shell-pop-get-unused-internal-mode-buffer-window)))
-                 (setq index (car ret))
-                 (cdr ret))
-             (shell-pop-get-internal-mode-buffer-window index)))
-        (cwd (replace-regexp-in-string "\\\\" "/" default-directory)))
-    (when (shell-pop--full-p)
-      (setq shell-pop-window-configuration
-            (list (current-window-configuration) (point-marker)))
-      (delete-other-windows))
-    (if w
-        (select-window w)
-      ;; save shell-pop-last-buffer and shell-pop-last-window to return
-      (setq shell-pop-last-buffer (buffer-name)
-            shell-pop-last-window (selected-window))
-      (when (and (not (= shell-pop-window-height 100))
-                 (not (shell-pop--full-p)))
-        (let ((new-window (shell-pop-split-window)))
-          (select-window new-window)))
-      (when (and shell-pop-default-directory (file-directory-p shell-pop-default-directory))
-        (cd shell-pop-default-directory))
-      (shell-pop--switch-to-shell-buffer index))
-    ;; (when (and shell-pop-autocd-to-working-dir
-    ;;            (not (string= cwd default-directory)))
-    ;;   (shell-pop--cd-to-cwd cwd))
-    (shell-pop--cd-to-cwd cwd)
-    (run-hooks 'shell-pop-in-after-hook)))
+    ;; directly modify cd withou typing in the prompt
+    ;; (comint-redirect-send-command-to-process
+    ;;  (concat "cd " (shell-quote-argument cwd)) nil (get-buffer-process (current-buffer)) nil t)
+    
+    (let ((comint-process-echoes t))
+      (comint-send-input))
+    (recenter 0))
+  (defun shell-pop--cd-to-cwd-term (cwd)
+    ;; (term-send-raw-string (concat "cd " (shell-quote-argument cwd) "\n"))
+    (comint-redirect-send-command-to-process
+     (shell-quote-argument cwd) nil (get-buffer-process (current-buffer)) nil t)
+    (comint-send-input)
+    (term-send-raw-string "\C-l")
+    )
+  (defun shell-pop-up (index)
+    (run-hooks 'shell-pop-in-hook)
+    (let ((w (if (listp index)
+		 (let ((ret (shell-pop-get-unused-internal-mode-buffer-window)))
+                   (setq index (car ret))
+                   (cdr ret))
+               (shell-pop-get-internal-mode-buffer-window index)))
+          (cwd (replace-regexp-in-string "\\\\" "/" default-directory)))
+      (when (shell-pop--full-p)
+	(setq shell-pop-window-configuration
+              (list (current-window-configuration) (point-marker)))
+	(delete-other-windows))
+      (if w
+          (select-window w)
+	;; save shell-pop-last-buffer and shell-pop-last-window to return
+	(setq shell-pop-last-buffer (buffer-name)
+              shell-pop-last-window (selected-window))
+	(when (and (not (= shell-pop-window-height 100))
+                   (not (shell-pop--full-p)))
+          (let ((new-window (shell-pop-split-window)))
+            (select-window new-window)))
+	(when (and shell-pop-default-directory (file-directory-p shell-pop-default-directory))
+          (cd shell-pop-default-directory))
+	(shell-pop--switch-to-shell-buffer index))
+      ;; (when (and shell-pop-autocd-to-working-dir
+      ;;            (not (string= cwd default-directory)))
+      ;;   (shell-pop--cd-to-cwd cwd))
+      (shell-pop--cd-to-cwd cwd)
+      (run-hooks 'shell-pop-in-after-hook))))
 
 ;; (shell-pop-set-internal-mode "ansi-term")
 ;; (shell-pop-set-internal-mode-shell "/bin/zsh")
